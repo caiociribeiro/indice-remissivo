@@ -22,10 +22,13 @@ public class Main {
         s = s.replaceAll("[0-9]", "");
 
         // remove hifen do comeco e final de palavras (palavras podem ter hifen no meio)
-        s = s.replaceAll("^-|-$", "");
+        s = s.replaceAll("(^-|-$)", "");
 
         // remove caracters especiais
-        s = s.replaceAll("[^a-zA-Z\\s]", "");
+        s = s.replaceAll("[^a-zA-Z\\s-]", "");
+
+        // para palavras em ingles com apostrofo possessivo
+        s = s.replaceAll("(?i)['s]", "");
 
         s = s.toLowerCase();
 
@@ -63,6 +66,7 @@ public class Main {
                if (!s.isEmpty()) {
                    indice.update(s, currentLine);
                }
+
            }
 
            currentLine++;
