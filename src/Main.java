@@ -1,4 +1,3 @@
-import res.BinarySearchTree;
 import res.Hashtable;
 
 import java.io.File;
@@ -11,8 +10,24 @@ import java.util.Scanner;
 public class Main {
 
     public static String normalize(String s) {
+        if (s == null || s.isEmpty()) return "";
+
+        // substitui letras acentuadas por sua letra base
         s = Normalizer.normalize(s, Normalizer.Form.NFD);
-        s = s.replaceAll("[^a-zA-Z]", "").toLowerCase();
+
+        // remove caracteres que nao sao ASCII
+        s = s.replaceAll("[^\\p{ASCII}]", "");
+
+        // remove numeros
+        s = s.replaceAll("[0-9]", "");
+
+        // remove hifen do comeco e final de palavras (palavras podem ter hifen no meio)
+        s = s.replaceAll("^-|-$", "");
+
+        // remove caracters especiais
+        s = s.replaceAll("[^a-zA-Z\\s]", "");
+
+        s = s.toLowerCase();
 
         return s;
     }
@@ -45,7 +60,7 @@ public class Main {
            for (String s : line) {
                s = normalize(s);
 
-               if (!s.isBlank()) {
+               if (!s.isEmpty()) {
                    indice.update(s, currentLine);
                }
            }
