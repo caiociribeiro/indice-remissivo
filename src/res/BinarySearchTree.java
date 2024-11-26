@@ -46,7 +46,7 @@ public class BinarySearchTree {
             return;
         }
 
-        if (word.compareTo(keyword.word) < 0) {
+        if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) < 0) {
             if (keyword.left == null) {
                 keyword.left = newKeyword;
                 return;
@@ -55,7 +55,7 @@ public class BinarySearchTree {
             insert(word, keyword.left);
         }
 
-        if (word.compareTo(keyword.word) > 0) {
+        if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) > 0) {
             if (keyword.right == null) {
                 keyword.right = newKeyword;
                 return;
@@ -75,17 +75,17 @@ public class BinarySearchTree {
             return;
         }
 
-        if (word.equals(keyword.word)) {
+        if (Normalizer.normalize(word).equals(Normalizer.normalize(keyword.word))) {
             keyword.addOccurrence(line);
             return;
         }
 
-        if (word.compareTo(keyword.word) < 0) {
+        if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) < 0) {
             if (keyword.left == null) {
                 return;
             }
             updateIfExists(word, line, keyword.left);
-        } else if (word.compareTo(keyword.word) > 0) {
+        } else if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) > 0) {
             if (keyword.right == null) {
                 return;
             }

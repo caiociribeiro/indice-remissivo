@@ -20,11 +20,19 @@ public class Hashtable {
     }
 
     public int getIndex(String word) {
+        word = Normalizer.normalize(word);
+
+        if (word.isEmpty()) return -1;
+
         return word.charAt(0) - 'a';
     }
 
     public void put(String word) {
         int index = getIndex(word);
+
+        if (index == -1) {
+            return;
+        }
 
         table[index].insert(word);
 
@@ -36,6 +44,7 @@ public class Hashtable {
 
         table[index].updateIfExists(word, line);
     }
+
 
 
     @Override
