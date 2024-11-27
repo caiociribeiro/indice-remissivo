@@ -51,9 +51,9 @@ public class Hashtable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (BinarySearchTree keywordBinarySearchTree : table) {
-            if (!keywordBinarySearchTree.isEmpty()) {
-                sb.append(keywordBinarySearchTree);
+        for (BinarySearchTree bst : table) {
+            if (!bst.isEmpty()) {
+                sb.append(bst);
             }
         }
 

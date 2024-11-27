@@ -94,7 +94,6 @@ public class BinarySearchTree {
 
     }
 
-
     @Override
     public String toString() {
         return inOrderToString(new StringBuilder(), root).toString();
