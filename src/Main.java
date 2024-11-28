@@ -1,4 +1,6 @@
 import javafx.application.Application;
+import javafx.geometry.HPos;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -18,9 +20,9 @@ public class Main extends Application {
 
     private TextField keywordsPathField;
     private TextField textPathField;
-    private TextField indicePathField;
     private TextArea indiceTextArea;
     private Text alertMessage;
+    private File lastDirectory = null;
 
     public static void main(String[] args) {
         launch(args);
@@ -36,15 +38,16 @@ public class Main extends Application {
         root.setPadding(new Insets(10));
 
         ColumnConstraints column1 = new ColumnConstraints();
-        column1.setPercentWidth(20);
+        column1.setPercentWidth(10);
         ColumnConstraints column2 = new ColumnConstraints();
-        column2.setPercentWidth(63);
+        column2.setPercentWidth(100);
         ColumnConstraints column3 = new ColumnConstraints();
         column3.setPercentWidth(17);
         root.getColumnConstraints().addAll(column1, column2, column3);
 
         keywordsPathField = new TextField();
         keywordsPathField.setPromptText("Selecione o arquivo de chaves");
+        keywordsPathField.setEditable(false);
         Button keywordsBrowseButton = new Button("Selecionar");
         keywordsBrowseButton.setOnAction(e -> selectFile(primaryStage, keywordsPathField));
         root.add(new Label("Chaves:"), 0, 0);
@@ -53,32 +56,30 @@ public class Main extends Application {
 
         textPathField = new TextField();
         textPathField.setPromptText("Selecione o arquivo de texto");
+        textPathField.setEditable(false);
         Button textBrowseButton = new Button("Selecionar");
         textBrowseButton.setOnAction(e -> selectFile(primaryStage, textPathField));
         root.add(new Label("Texto:"), 0, 1);
         root.add(textPathField, 1, 1);
         root.add(textBrowseButton, 2, 1);
 
-        indicePathField = new TextField();
-        indicePathField.setPromptText("Selecione onde salvar o índice");
-        Button indiceBrowseButton = new Button("Selecionar");
-        indiceBrowseButton.setOnAction(e -> saveFile(primaryStage, indicePathField));
-        root.add(new Label("Salvar índice em:"), 0, 2);
-        root.add(indicePathField, 1, 2);
-        root.add(indiceBrowseButton, 2, 2);
+        GridPane.setHalignment(textBrowseButton, HPos.RIGHT);
+        GridPane.setHalignment(keywordsBrowseButton, HPos.RIGHT);
 
         Button generateButton = new Button("Gerar Índice");
         generateButton.setOnAction(e -> handleGenerateIndice(primaryStage));
-        root.add(generateButton, 1, 3, 2, 1);
+        root.add(generateButton, 0, 3, 2, 1);
+        GridPane.setHalignment(generateButton, HPos.LEFT);
 
         indiceTextArea = new TextArea();
         indiceTextArea.setEditable(false);
+        indiceTextArea.setPrefHeight(300);
         root.add(indiceTextArea, 0, 4, 3, 1);
 
         alertMessage = new Text();
         root.add(alertMessage, 0, 5, 3, 1);
 
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -86,30 +87,50 @@ public class Main extends Application {
     private void selectFile(Stage stage, TextField targetField) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Selecione um arquivo");
+
+        if (lastDirectory != null) {
+            fileChooser.setInitialDirectory(lastDirectory);
+        }
+
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(stage);
+
         if (selectedFile != null) {
             targetField.setText(selectedFile.getAbsolutePath());
+            lastDirectory = selectedFile.getParentFile();
         }
     }
 
-    private void saveFile(Stage stage, TextField targetField) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Salvar arquivo");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File selectedFile = fileChooser.showSaveDialog(stage);
-        if (selectedFile != null) {
-            targetField.setText(selectedFile.getAbsolutePath());
+    private String selectDirectory(Stage stage) {
+        String path = "";
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Selecione a pasta");
+
+        if (lastDirectory != null) {
+            directoryChooser.setInitialDirectory(lastDirectory);
         }
+
+        File selectedDirectory = directoryChooser.showDialog(stage);
+
+        if (selectedDirectory != null) {
+            path = selectedDirectory.getAbsolutePath();
+        }
+
+        return path;
     }
 
     private void handleGenerateIndice(Stage stage) {
         String keywordsPath = keywordsPathField.getText();
         String textPath = textPathField.getText();
-        String indicePath = indicePathField.getText();
+
+        String indicePath = selectDirectory(stage);
+
+        if (!indicePath.isEmpty())
+            indicePath += "\\" + uniqueFileName();
 
         if (keywordsPath.isEmpty() || textPath.isEmpty() || indicePath.isEmpty()) {
-            alertMessage.setText("Por favor, preencha todos os campos.");
+            alertMessage.setText("Preencha todos os campos.");
             alertMessage.setStyle("-fx-fill: red;");
             return;
         }
@@ -118,8 +139,14 @@ public class Main extends Application {
             String indiceContent = generateIndice(keywordsPath, textPath, indicePath);
             indiceTextArea.setText(indiceContent);
 
-            alertMessage.setText("Índice-remissivo gerado com sucesso! Arquivo salvo em: " + indicePath);
+            alertMessage.setText("Índice-remissivo gerado com sucesso! Arquivo salvo em " + indicePath);
             alertMessage.setStyle("-fx-fill: green;");
+
+            File file = new File(indicePath);
+            if (file.exists()) {
+                new ProcessBuilder("explorer.exe", "/select,", file.getAbsolutePath()).start();
+            }
+
         } catch (Exception ex) {
             alertMessage.setText("Erro ao gerar o índice: " + ex.getMessage());
             alertMessage.setStyle("-fx-fill: red;");
@@ -166,6 +193,11 @@ public class Main extends Application {
         }
 
         return indice.toString();
+    }
+
+    private String uniqueFileName() {
+        long currentMillis = System.currentTimeMillis();
+        return "indice-" + currentMillis + ".txt";
     }
 
     private static String normalize(String s) {
