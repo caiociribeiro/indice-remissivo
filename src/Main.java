@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.scene.text.Text;
 
 import res.Hashtable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -79,7 +80,7 @@ public class Main extends Application {
         alertMessage = new Text();
         root.add(alertMessage, 0, 5, 3, 1);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -101,33 +102,55 @@ public class Main extends Application {
         }
     }
 
-    private String selectDirectory(Stage stage) {
-        String path = "";
-
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Selecione a pasta");
+    private String selectFile(Stage stage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Salvar arquivo");
 
         if (lastDirectory != null) {
-            directoryChooser.setInitialDirectory(lastDirectory);
+            fileChooser.setInitialDirectory(lastDirectory);
+        } else {
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         }
 
-        File selectedDirectory = directoryChooser.showDialog(stage);
+        File directory = lastDirectory != null ? lastDirectory : new File(System.getProperty("user.home"));
+        String suggestedFileName = getUniqueFileName(directory);
 
-        if (selectedDirectory != null) {
-            path = selectedDirectory.getAbsolutePath();
+        fileChooser.setInitialFileName(suggestedFileName);
+
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            lastDirectory = file.getParentFile();
+            return file.getAbsolutePath();
         }
 
-        return path;
+        return null;
+    }
+
+    private String getUniqueFileName(File directory) {
+        String base = "indice";
+        int c = 1;
+        String fileName = base;
+
+        File file = new File(directory, fileName + ".txt");
+        while (file.exists()) {
+            fileName = base + " (" + c + ")";
+            file = new File(directory, fileName + ".txt");
+            c++;
+        }
+
+        return fileName;
     }
 
     private void handleGenerateIndice(Stage stage) {
+        String indicePath = selectFile(stage);
+
+        if (indicePath == null) return;
+
         String keywordsPath = keywordsPathField.getText();
         String textPath = textPathField.getText();
 
-        String indicePath = selectDirectory(stage);
-
-        if (!indicePath.isEmpty())
-            indicePath += "\\" + uniqueFileName();
 
         if (keywordsPath.isEmpty() || textPath.isEmpty() || indicePath.isEmpty()) {
             alertMessage.setText("Preencha todos os campos.");
@@ -139,7 +162,7 @@ public class Main extends Application {
             String indiceContent = generateIndice(keywordsPath, textPath, indicePath);
             indiceTextArea.setText(indiceContent);
 
-            alertMessage.setText("Índice-remissivo gerado com sucesso! Arquivo salvo em " + indicePath);
+            alertMessage.setText("Índice-remissivo gerado com sucesso! Arquivo salvo.");
             alertMessage.setStyle("-fx-fill: green;");
 
             File file = new File(indicePath);
@@ -148,6 +171,7 @@ public class Main extends Application {
             }
 
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             alertMessage.setText("Erro ao gerar o índice: " + ex.getMessage());
             alertMessage.setStyle("-fx-fill: red;");
         }
@@ -193,11 +217,6 @@ public class Main extends Application {
         }
 
         return indice.toString();
-    }
-
-    private String uniqueFileName() {
-        long currentMillis = System.currentTimeMillis();
-        return "indice-" + currentMillis + ".txt";
     }
 
     private static String normalize(String s) {

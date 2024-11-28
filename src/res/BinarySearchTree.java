@@ -123,9 +123,12 @@ public class BinarySearchTree {
         }
 
         public void addOccurrence(int occurrence) {
-            if (!occurrences.binarySearch(occurrence)) {
-                occurrences.addOrdered(occurrence);
+            Integer lastOccurrence = occurrences.get(occurrences.size() - 1);
+
+            if (lastOccurrence == null || lastOccurrence != occurrence) {
+                occurrences.addLast(occurrence);
             }
+
         }
 
         @Override

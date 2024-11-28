@@ -20,6 +20,10 @@ public class ArrayList<E extends Comparable<E>> {
     }
 
     public E get(int index) {
+        if (index < 0 || index >= size) {
+            return null;
+        }
+
         return array[index];
     }
 
