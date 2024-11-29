@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.geometry.HPos;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -48,7 +47,6 @@ public class Main extends Application {
 
         keywordsPathField = new TextField();
         keywordsPathField.setPromptText("Selecione o arquivo de chaves");
-        keywordsPathField.setEditable(false);
         Button keywordsBrowseButton = new Button("Selecionar");
         keywordsBrowseButton.setOnAction(e -> selectFile(primaryStage, keywordsPathField));
         root.add(new Label("Chaves:"), 0, 0);
@@ -57,7 +55,6 @@ public class Main extends Application {
 
         textPathField = new TextField();
         textPathField.setPromptText("Selecione o arquivo de texto");
-        textPathField.setEditable(false);
         Button textBrowseButton = new Button("Selecionar");
         textBrowseButton.setOnAction(e -> selectFile(primaryStage, textPathField));
         root.add(new Label("Texto:"), 0, 1);
@@ -106,13 +103,10 @@ public class Main extends Application {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Salvar arquivo");
 
-        if (lastDirectory != null) {
-            fileChooser.setInitialDirectory(lastDirectory);
-        } else {
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        }
-
         File directory = lastDirectory != null ? lastDirectory : new File(System.getProperty("user.home"));
+
+        fileChooser.setInitialDirectory(directory);
+
         String suggestedFileName = getUniqueFileName(directory);
 
         fileChooser.setInitialFileName(suggestedFileName);
@@ -162,7 +156,7 @@ public class Main extends Application {
             String indiceContent = generateIndice(keywordsPath, textPath, indicePath);
             indiceTextArea.setText(indiceContent);
 
-            alertMessage.setText("Índice-remissivo gerado com sucesso! Arquivo salvo.");
+            alertMessage.setText("Índice-remissivo gerado com sucesso!");
             alertMessage.setStyle("-fx-fill: green;");
 
             File file = new File(indicePath);

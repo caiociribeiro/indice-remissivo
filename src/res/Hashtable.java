@@ -45,8 +45,6 @@ public class Hashtable {
         table[index].updateIfExists(word, line);
     }
 
-
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
