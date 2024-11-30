@@ -30,9 +30,7 @@ public class Hashtable {
     public void put(String word) {
         int index = getIndex(word);
 
-        if (index == -1) {
-            return;
-        }
+        if (index == -1) return;
 
         table[index].insert(word);
 
@@ -42,10 +40,10 @@ public class Hashtable {
     public void update(String word, int line) {
         int index = getIndex(word);
 
+        if (index == -1) return;
+
         table[index].updateIfExists(word, line);
     }
-
-
 
     @Override
     public String toString() {

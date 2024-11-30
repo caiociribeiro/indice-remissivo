@@ -34,19 +34,22 @@ public class BinarySearchTree {
     }
 
     public void insert(String word) {
-        size--;
+        size++;
         insert(word, root);
     }
 
     private void insert(String word, Keyword keyword) {
         Keyword newKeyword = new Keyword(word);
 
-        if (root == null) {
+        if (isEmpty()) {
             root = newKeyword;
             return;
         }
 
-        if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) < 0) {
+        String wordNormalized = Normalizer.normalize(word);
+        String keywordWordNormalized = Normalizer.normalize(keyword.word);
+
+        if (wordNormalized.compareTo(keywordWordNormalized) < 0) {
             if (keyword.left == null) {
                 keyword.left = newKeyword;
                 return;
@@ -55,7 +58,7 @@ public class BinarySearchTree {
             insert(word, keyword.left);
         }
 
-        if (Normalizer.normalize(word).compareTo(Normalizer.normalize(keyword.word)) > 0) {
+        if (wordNormalized.compareTo(keywordWordNormalized) > 0) {
             if (keyword.right == null) {
                 keyword.right = newKeyword;
                 return;
@@ -123,9 +126,12 @@ public class BinarySearchTree {
         }
 
         public void addOccurrence(int occurrence) {
-            if (!occurrences.binarySearch(occurrence)) {
-                occurrences.addOrdered(occurrence);
+            Integer lastOccurrence = occurrences.get(occurrences.size() - 1);
+
+            if (lastOccurrence == null || lastOccurrence != occurrence) {
+                occurrences.addLast(occurrence);
             }
+
         }
 
         @Override
