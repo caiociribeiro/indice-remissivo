@@ -1,17 +1,17 @@
-### 1. Baixar o SDK do Javafx
+### Baixar o SDK do Javafx
 
 1. Acesse o [site](https://gluonhq.com/products/javafx/)
 2. Baixe a versao referente ao seu SO
 3. Extrair o arquivo .zip
 
-### 2. Configurar no IntelliJ
+### Configurar no IntelliJ
 
 1. **Project Structure** > **Libraries**
 2. Clique em **+**
 3. Navegue ate a pasta lib do SDK do Javafx
 4. Selecione todos os .jar e clique em OK
 
-### 3. Adicionar Run Configuration
+### Adicionar Run Configuration
 
 1. Va em **Edit Configurations**
 2. Clique em **Add new** > **Application**
