@@ -194,9 +194,7 @@ public class Main extends Application {
             for (String s : line) {
                 s = normalize(s);
 
-                if (!s.isEmpty()) {
-                    indice.update(s, currentLine);
-                }
+                indice.update(s, currentLine);
             }
 
             currentLine++;
