@@ -10,6 +10,8 @@
 2. Clique em **+**
 3. Navegue ate a pasta lib do SDK do Javafx
 4. Selecione todos os .jar e clique em OK
+5. Ir em **Project Structure** > **Modules** > Modulo do Projeto > **Dependencies**
+6. Seleciona **javafx**
 
 ### Adicionar Run Configuration
 
@@ -19,6 +21,6 @@
 4. Em VM Options:
 
 ```
-module-path "path/to/javafx-sdk/lib" --add-modules javafx.controls,javafx.fxml
+--module-path "path/to/javafx-sdk/lib" --add-modules javafx.controls,javafx.fxml
 ```
 
