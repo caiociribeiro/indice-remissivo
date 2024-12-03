@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main extends Application {
@@ -189,7 +190,7 @@ public class Main extends Application {
 
         int currentLine = 1;
         while (textScanner.hasNextLine()) {
-            String[] line = textScanner.nextLine().split(" ");
+            String[] line = textScanner.nextLine().trim().split(" ");
 
             for (String s : line) {
                 s = normalize(s);
@@ -213,6 +214,8 @@ public class Main extends Application {
 
     private static String normalize(String s) {
         if (s == null || s.isEmpty()) return "";
+
+        // remove tudo que NAO eh letra do inicio e fim das palavras
         return s.replaceAll("^[^\\p{L}]+|[^\\p{L}]+$", "");
     }
 }

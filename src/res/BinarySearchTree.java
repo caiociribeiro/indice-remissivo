@@ -17,22 +17,6 @@ public class BinarySearchTree {
         return root == null;
     }
 
-    private Keyword findMin(Keyword Keyword) {
-        while (Keyword.left != null) {
-            Keyword = Keyword.left;
-        }
-
-        return Keyword;
-    }
-
-    private Keyword findMax(Keyword keyword) {
-        while (keyword.right != null) {
-            keyword = keyword.right;
-        }
-
-        return keyword;
-    }
-
     public void insert(String word) {
         size++;
         insert(word, root);
@@ -116,22 +100,19 @@ public class BinarySearchTree {
 
     private static class Keyword {
         String word;
-        ArrayList<Integer> occurrences;
+        LinkedList occurrences;
         Keyword left, right;
 
         Keyword(String word) {
             this.word = word;
-            occurrences = new ArrayList<>();
+            occurrences = new LinkedList();
             left = right = null;
         }
 
         public void addOccurrence(int occurrence) {
-            Integer lastOccurrence = occurrences.get(occurrences.size() - 1);
-
-            if (lastOccurrence == null || lastOccurrence != occurrence) {
+            if (occurrences.getLast() != occurrence) {
                 occurrences.addLast(occurrence);
             }
-
         }
 
         @Override
